@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primaryColor: AppColors.primaryColor,
             scaffoldBackgroundColor: AppColors.white,
-            useMaterial3: false,
+         //   useMaterial3: false,
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: '/login',

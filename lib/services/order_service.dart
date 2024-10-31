@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:talabat_pos/models/item_model.dart';
@@ -27,9 +29,20 @@ class OrderService with ChangeNotifier {
   }
 
   set setItemOrder(value) {
-    if (_order.items == null) {
-      _order.items = [];
+    _order.items ??= [];
+    if (_order.items!.where((element) => element.id == value.id).isEmpty) {
+      _order.items!.add(value);
+    } else {
+      // update
+      for (var element in _order.items!) {
+        if (element.id == value.id) {
+          element.itemsCount += 1;
+          break;
+        }
+      }
     }
+
+    _order.items!.removeWhere((element) => element.id == value.id);
     _order.items!.add(value);
     notifyListeners();
   }
@@ -46,7 +59,7 @@ class OrderService with ChangeNotifier {
     _order.total = 0;
 
     for (var item in _order.items!) {
-      _order.subTotal = _order.subTotal! + item.price!;
+      _order.subTotal = _order.subTotal! + (item.price! * item.itemsCount);
     }
     _order.total = _order.subTotal;
     _order.discount = 0;
@@ -54,6 +67,7 @@ class OrderService with ChangeNotifier {
 
     notifyListeners();
   }
+  
 
   deleteItem(index) {
     _order.items!.removeAt(index);

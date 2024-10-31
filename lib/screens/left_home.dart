@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:talabat_pos/models/category_model.dart';
 import 'package:talabat_pos/models/item_model.dart';
+import 'package:talabat_pos/screens/right_home.dart';
 import 'package:talabat_pos/services/category_service.dart';
 import 'package:talabat_pos/services/item_service.dart';
 import 'package:talabat_pos/services/order_service.dart';
 import 'package:talabat_pos/utils/color.dart';
 import 'package:talabat_pos/utils/images.dart';
+import 'package:talabat_pos/utils/responsive.dart';
 import 'package:talabat_pos/utils/spaces.dart';
 import 'package:talabat_pos/utils/styles.dart';
 
@@ -68,9 +70,44 @@ class _LeftHomeState extends State<LeftHome> {
                 ImageApp.logo,
                 width: MediaQuery.of(context).size.width * 0.1,
               ),
-              Icon(
-                Icons.language_outlined,
-                color: AppColors.primaryColor,
+              Row(
+                children: [
+                  Icon(
+                    Icons.language_outlined,
+                    color: AppColors.primaryColor,
+                  ),
+                  SpacesApp.spaceW_10,
+                  if ((AppDimension(context).width < 800))
+                    orderService.getOrder.items == null
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const RightHome(),
+                                  ));
+                            },
+                            child: Icon(
+                              Icons.shopping_cart_rounded,
+                              color: AppColors.primaryColor,
+                            ))
+                        : Badge.count(
+                            count: orderService.getOrder.items!.length,
+                            alignment: AlignmentDirectional.topEnd,
+                            child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const RightHome(),
+                                      ));
+                                },
+                                child: Icon(
+                                  Icons.shopping_cart_rounded,
+                                  color: AppColors.primaryColor,
+                                )),
+                          )
+                ],
               )
             ],
           ),
@@ -196,8 +233,24 @@ class _LeftHomeState extends State<LeftHome> {
                   child: GridView.builder(
                     itemCount: itemService.itemModel!.data!.length,
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4),
+                        // SliverGridDelegateWithMaxCrossAxisExtent(
+                        //     maxCrossAxisExtent:
+                        //         MediaQuery.of(context).size.width * 0.3,
+                        //     childAspectRatio: 1,
+                        //     crossAxisSpacing: 10,
+                        //     mainAxisSpacing: 10),
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: ResponsiveValue(context,
+                                mobile: 2,
+                                bigMobile: 2,
+                                tablet: 3,
+                                bigTablet: 3,
+                                desktop: 4,
+                                bigDesktop: 5),
+                            crossAxisSpacing: 13,
+                            mainAxisSpacing: 13,
+                            childAspectRatio:
+                                ResponsiveChildGrid(context: context)),
                     itemBuilder: (BuildContext context, index) {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
@@ -211,7 +264,7 @@ class _LeftHomeState extends State<LeftHome> {
                               orderService.calc();
                             },
                             child: AspectRatio(
-                              aspectRatio: 1.5,
+                              aspectRatio: 1.8,
                               child: Card(
                                 shadowColor: AppColors.baseColor(),
                                 shape: RoundedRectangleBorder(

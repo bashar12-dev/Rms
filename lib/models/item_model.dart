@@ -47,6 +47,8 @@ class ItemData {
   final String? name;
   final int? price;
   final String? imagePath;
+    int itemsCount;
+
 
   ItemData({
     this.id,
@@ -54,6 +56,7 @@ class ItemData {
     this.name,
     this.price,
     this.imagePath,
+    this.itemsCount=1
   });
 
   factory ItemData.fromJson(Map<String, dynamic> json) => ItemData(
